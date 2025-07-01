@@ -1,4 +1,4 @@
-import contractJson from '../../Funding.json';
+import contractJson from '../../../smartcontract/artifacts/contracts/Funding.sol/Funding.json';
 
 export const contractABI = contractJson.abi;
 export const contractAddress = import.meta.env.VITE_CONTRACT_ADDRESS;

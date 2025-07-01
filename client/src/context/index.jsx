@@ -56,66 +56,78 @@ export const StateContextProvider = ({ children }) => {
   }, []);
 
   const publishCampaign = async (form) => {
-  try {
-    if (!contract) throw new Error("Smart contract not connected.");
-    if (!address) throw new Error("Wallet not connected.");
+    try {
+      if (!contract) throw new Error("Smart contract not connected.");
+      if (!address) throw new Error("Wallet not connected.");
 
-    const parsedTarget = ethers.parseUnits(form.target.toString(), 18);
-    const parsedDeadline = Math.floor(new Date(form.deadline).getTime() / 1000);
+      const parsedTarget = ethers.parseUnits(form.target.toString(), 18);
+      const parsedDeadline = Math.floor(new Date(form.deadline).getTime() / 1000);
 
-    console.log("🚀 Calling createCampaign with:", {
-      address,
-      title: form.title,
-      description: form.description,
-      target: parsedTarget,
-      deadline: parsedDeadline,
-      image: form.image,
-    });
+      console.log("🚀 Calling createCampaign with:", {
+        address,
+        title: form.title,
+        description: form.description,
+        target: parsedTarget,
+        deadline: parsedDeadline,
+        image: form.image,
+      });
 
-    const tx = await contract.createCampaign(
-      address,
-      form.title,
-      form.description,
-      parsedTarget,
-      parsedDeadline,
-      form.image
-    );
+      const tx = await contract.createCampaign(
+        address,
+        form.title,
+        form.description,
+        parsedTarget,
+        parsedDeadline,
+        form.image
+      );
 
-    console.log("⏳ Transaction sent:", tx.hash);
-    await tx.wait();
-    console.log("✅ Campaign created in TX:", tx.hash);
-  } catch (error) {
-    console.error("❌ Failed to create campaign:", {
-      message: error.message,
-      reason: error.reason,
-      code: error.code,
-      data: error.data,
-      stack: error.stack
-    });
+      console.log("⏳ Transaction sent:", tx.hash);
+      await tx.wait();
+      console.log("✅ Campaign created in TX:", tx.hash);
+    } catch (error) {
+      console.error("❌ Failed to create campaign:", {
+        message: error.message,
+        reason: error.reason,
+        code: error.code,
+        data: error.data,
+        stack: error.stack
+      });
 
-    if (error.code === "INSUFFICIENT_FUNDS") {
-      alert("💸 You don’t have enough ETH for gas or donation target!");
-    } else {
-      alert("❌ Transaction failed: " + (error.reason || error.message));
+      if (error.code === "INSUFFICIENT_FUNDS") {
+        alert("💸 You don't have enough ETH for gas or donation target!");
+      } else {
+        alert("❌ Transaction failed: " + (error.reason || error.message));
+      }
+
+      throw error;
     }
-
-    throw error;
-  }
-};
+  };
 
   const getCampaigns = async () => {
     try {
+      if (!contract) throw new Error("Contract not connected");
+
+      console.log("📞 Calling getCampaigns...");
+      
+      // Direct contract call - much simpler and more reliable
       const campaigns = await contract.getCampaigns();
-      return campaigns.map((campaign, i) => ({
+      
+      console.log("📋 Raw campaigns data:", campaigns);
+
+      // Transform the data
+      const parsedCampaigns = campaigns.map((campaign, i) => ({
         owner: campaign.owner,
         title: campaign.title,
         description: campaign.description,
         target: ethers.formatEther(campaign.target.toString()),
-        deadline: campaign.deadline.toNumber(),
+        deadline: Number(campaign.deadline),
         amountCollected: ethers.formatEther(campaign.amountCollected.toString()),
         image: campaign.image,
         pId: i,
       }));
+
+      console.log("✅ Parsed campaigns:", parsedCampaigns);
+      return parsedCampaigns;
     } catch (error) {
       console.error("❌ Error fetching campaigns:", error);
       return [];

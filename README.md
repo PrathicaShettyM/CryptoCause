@@ -116,3 +116,5 @@ npx hardhat compile
 ```bash
 npx hardhat run scripts/deploy.js --network localhost
 ```
+
+everytime copy paste the private key (delete the previous accounts) to import ethers

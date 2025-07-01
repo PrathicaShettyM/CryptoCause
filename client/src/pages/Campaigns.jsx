@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
-
-import { DisplayCampaigns } from '../components';
-import { useStateContext } from '../context'
+import React, { useState, useEffect } from 'react';
+import DisplayCampaigns  from '../pages/DisplayCampaigns';
+import { useStateContext } from '../context/index';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Campaigns = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,19 +15,23 @@ const Campaigns = () => {
     const data = await getCampaigns();
     setCampaigns(data);
     setIsLoading(false);
-  }
+  };
 
   useEffect(() => {
-    if(contract) fetchCampaigns();
+    if (contract) fetchCampaigns();
   }, [address, contract]);
 
   return (
-    <DisplayCampaigns 
-      title="All Campaigns"
-      isLoading={isLoading}
-      campaigns={campaigns}
-    />
-  )
-}
+    <>
+      <Navbar />
+      <DisplayCampaigns
+        title="Campaigns List"
+        isLoading={isLoading}
+        campaigns={campaigns}
+      />
+      <Footer />
+    </>
+  );
+};
 
 export default Campaigns;
