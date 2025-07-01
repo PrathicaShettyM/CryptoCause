@@ -1,8 +1,14 @@
 import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import HomePage from './pages/Home';
 
 function App() {
     return(
-      <div className='bg-cyan-700 text-amber-300 text-9xl font-bold'>Hello Prathica</div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
     )
 }
 
