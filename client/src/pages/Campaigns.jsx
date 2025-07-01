@@ -21,6 +21,7 @@ const Campaigns = () => {
     if (contract) fetchCampaigns();
   }, [address, contract]);
 
+  
   return (
     <>
       <Navbar />

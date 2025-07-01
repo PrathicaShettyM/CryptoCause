@@ -4,6 +4,8 @@ import HomePage from './pages/Home';
 import CreateCampaign from './pages/CreateCampaign';
 import CampaignDetails from './pages/CampaignDetails';
 import Campaigns from './pages/Campaigns';
+import Profile from './pages/Profile';
+import Verify from './pages/Verify';
 
 function App() {
     return(
@@ -13,6 +15,8 @@ function App() {
           <Route path="/create-campaign" element={<CreateCampaign />} />
           <Route path="/view-campaigns" element={<Campaigns/>} />
           <Route path="/campaign/:id" element={<CampaignDetails />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/verify" element={<Verify />} />
         </Routes>
       </BrowserRouter>
     )
