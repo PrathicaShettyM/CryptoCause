@@ -3,14 +3,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 
 import { useStateContext } from '../context';
-import { CountBox, CustomButton, Loader } from '../components';
+import CountBox  from '../components/CountBox';
+import CustomButton from '../components/CustomButton';
+//import { Loader } from '../components/Loader';
 import { calculateBarPercentage, daysLeft } from '../utils';
-import { thirdweb } from '../assets';
+//import { thirdweb } from '../assets';
 
 const CampaignDetails = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { donate, getDonations, contract, address } = useStateContext();
+
+  if (!state) {
+    return <div className="text-white text-center mt-10">⚠️ No campaign data found. Please go back and select a campaign.</div>;
+  }
 
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState('');
@@ -39,7 +45,7 @@ const CampaignDetails = () => {
 
   return (
     <div>
-      {isLoading && <Loader />}
+      {isLoading}
 
       <div className="w-full flex md:flex-row flex-col mt-10 gap-[30px]">
         <div className="flex-1 flex-col">
@@ -64,7 +70,7 @@ const CampaignDetails = () => {
 
             <div className="mt-[20px] flex flex-row items-center flex-wrap gap-[14px]">
               <div className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#2c2f32] cursor-pointer">
-                <img src={thirdweb} alt="user" className="w-[60%] h-[60%] object-contain"/>
+                <img src={thirdweb} alt="Thirdweb Logo" />
               </div>
               <div>
                 <h4 className="font-epilogue font-semibold text-[14px] text-white break-all">{state.owner}</h4>

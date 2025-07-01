@@ -1,118 +1,128 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { ethers } from 'ethers';
-
-import { useStateContext } from '../context';
-import { money } from '../assets';
-import { CustomButton, FormField, Loader } from '../components';
-import { checkIfImage } from '../utils';
+import { getFundingContract } from '../utils/getContract'; // Make sure this is async and correct
+import { useNavigate } from 'react-router-dom';
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const { createCampaign } = useStateContext();
+
   const [form, setForm] = useState({
-    name: '',
     title: '',
     description: '',
-    target: '', 
+    target: '',
     deadline: '',
-    image: ''
+    image: '',
   });
 
-  const handleFormFieldChange = (fieldName, e) => {
-    setForm({ ...form, [fieldName]: e.target.value })
-  }
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    checkIfImage(form.image, async (exists) => {
-      if(exists) {
-        setIsLoading(true)
-        await createCampaign({ ...form, target: ethers.utils.parseUnits(form.target, 18)})
-        setIsLoading(false);
-        navigate('/');
-      } else {
-        alert('Provide valid image URL')
-        setForm({ ...form, image: '' });
-      }
-    })
-  }
+    try {
+      setIsLoading(true);
+
+      // 1️⃣ Request user's wallet address from MetaMask
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const userAddress = accounts[0];
+
+      // 2️⃣ Load contract with signer
+      const contract = await getFundingContract();
+
+      // 3️⃣ Prepare parameters
+      const targetInWei = ethers.utils.parseEther(form.target); // e.g. "1.5" ETH → BigInt
+      const deadlineTimestamp = Math.floor(new Date(form.deadline).getTime() / 1000); // convert to seconds
+
+      // 4️⃣ Call smart contract
+      const tx = await contract.createCampaign(
+        userAddress,
+        form.title,
+        form.description,
+        targetInWei,
+        deadlineTimestamp,
+        form.image
+      );
+
+      await tx.wait();
+      alert('✅ Campaign created successfully!');
+      navigate('/');
+    } catch (err) {
+      console.error('❌ Error creating campaign:', err);
+      alert('Something went wrong. Check the console.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="bg-[#1c1c24] flex justify-center items-center flex-col rounded-[10px] sm:p-10 p-4">
-      {isLoading && <Loader />}
-      <div className="flex justify-center items-center p-[16px] sm:min-w-[380px] bg-[#3a3a43] rounded-[10px]">
-        <h1 className="font-epilogue font-bold sm:text-[25px] text-[18px] leading-[38px] text-white">Start a Campaign</h1>
-      </div>
+    <div className="max-w-xl mx-auto py-8 px-4">
+      <h2 className="text-2xl font-bold mb-6 text-center">Create New Campaign</h2>
 
-      <form onSubmit={handleSubmit} className="w-full mt-[65px] flex flex-col gap-[30px]">
-        <div className="flex flex-wrap gap-[40px]">
-          <FormField 
-            labelName="Your Name or Organation Name *"
-            placeholder="Microsoft..."
-            inputType="text"
-            value={form.name}
-            handleChange={(e) => handleFormFieldChange('name', e)}
-          />
-          <FormField 
-            labelName="Campaign Title *"
-            placeholder="Campaign title"
-            inputType="text"
-            value={form.title}
-            handleChange={(e) => handleFormFieldChange('title', e)}
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 shadow-lg rounded-lg">
+        <input
+          type="text"
+          name="title"
+          placeholder="Campaign Title"
+          value={form.title}
+          onChange={handleChange}
+          required
+          className="w-full border border-gray-300 px-4 py-2 rounded"
+        />
 
-        <FormField 
-            labelName="Description of the campaign *"
-            placeholder="Write a description of your campaign"
-            isTextArea
-            value={form.description}
-            handleChange={(e) => handleFormFieldChange('description', e)}
-          />
+        <textarea
+          name="description"
+          placeholder="Campaign Description"
+          value={form.description}
+          onChange={handleChange}
+          required
+          className="w-full border border-gray-300 px-4 py-2 rounded"
+          rows={4}
+        />
 
-        <div className="w-full flex justify-start items-center p-4 bg-[#8c6dfd] h-[120px] rounded-[10px]">
-          <img src={money} alt="money" className="w-[40px] h-[40px] object-contain"/>
-          <h4 className="font-epilogue font-bold text-[25px] text-white ml-[20px]">You will get 100% of the raised amount</h4>
-        </div>
+        <input
+          type="number"
+          name="target"
+          placeholder="Target Amount (ETH)"
+          value={form.target}
+          onChange={handleChange}
+          required
+          className="w-full border border-gray-300 px-4 py-2 rounded"
+        />
 
-        <div className="flex flex-wrap gap-[40px]">
-          <FormField 
-            labelName="Goal *"
-            placeholder="ETH 10"
-            inputType="text"
-            value={form.target}
-            handleChange={(e) => handleFormFieldChange('target', e)}
-          />
-          <FormField 
-            labelName="End Date *"
-            placeholder="End Date"
-            inputType="date"
-            value={form.deadline}
-            handleChange={(e) => handleFormFieldChange('deadline', e)}
-          />
-        </div>
+        <input
+          type="date"
+          name="deadline"
+          value={form.deadline}
+          onChange={handleChange}
+          required
+          className="w-full border border-gray-300 px-4 py-2 rounded"
+        />
 
-        <FormField 
-            labelName="Campaign image *"
-            placeholder="Place a logo/image URL of your campaign"
-            inputType="url"
-            value={form.image}
-            handleChange={(e) => handleFormFieldChange('image', e)}
-          />
+        <input
+          type="url"
+          name="image"
+          placeholder="Image URL (IPFS/HTTP)"
+          value={form.image}
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-2 rounded"
+        />
 
-          <div className="flex justify-center items-center mt-[40px]">
-            <CustomButton 
-              btnType="submit"
-              title="Submit new campaign"
-              styles="bg-[#1dc071]"
-            />
-          </div>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`w-full py-2 rounded bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold shadow-md hover:opacity-90 ${
+            isLoading ? 'opacity-50 cursor-wait' : ''
+          }`}
+        >
+          {isLoading ? 'Submitting...' : 'Submit Campaign'}
+        </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default CreateCampaign;
