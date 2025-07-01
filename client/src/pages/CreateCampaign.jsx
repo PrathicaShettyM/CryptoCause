@@ -50,15 +50,15 @@ const CreateCampaign = () => {
       <form onSubmit={handleSubmit} className="w-full mt-[65px] flex flex-col gap-[30px]">
         <div className="flex flex-wrap gap-[40px]">
           <FormField 
-            labelName="Your Name *"
-            placeholder="Ex: Sai Vamsi"
+            labelName="Your Name or Organation Name *"
+            placeholder="Microsoft..."
             inputType="text"
             value={form.name}
             handleChange={(e) => handleFormFieldChange('name', e)}
           />
           <FormField 
             labelName="Campaign Title *"
-            placeholder="Give a short title"
+            placeholder="Campaign title"
             inputType="text"
             value={form.title}
             handleChange={(e) => handleFormFieldChange('title', e)}
@@ -66,8 +66,8 @@ const CreateCampaign = () => {
         </div>
 
         <FormField 
-            labelName="Story *"
-            placeholder="Write your story/description of your campaign"
+            labelName="Description of the campaign *"
+            placeholder="Write a description of your campaign"
             isTextArea
             value={form.description}
             handleChange={(e) => handleFormFieldChange('description', e)}
@@ -81,7 +81,7 @@ const CreateCampaign = () => {
         <div className="flex flex-wrap gap-[40px]">
           <FormField 
             labelName="Goal *"
-            placeholder="ETH 0.50"
+            placeholder="ETH 10"
             inputType="text"
             value={form.target}
             handleChange={(e) => handleFormFieldChange('target', e)}
@@ -115,4 +115,4 @@ const CreateCampaign = () => {
   )
 }
 
-export default CreateCampaign
+export default CreateCampaign;
