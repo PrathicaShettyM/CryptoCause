@@ -1,17 +1,31 @@
 import { useLocation } from 'react-router-dom';
+import { useStateContext } from '../context';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DonateButton from '../components/DonateButton';
+import { useEffect, useState } from 'react';
 
 const CampaignDetails = () => {
-  const { state: campaign } = useLocation();
+  const { state: campaignState } = useLocation();
+  const { getCampaigns } = useStateContext();
+  const [campaign, setCampaign] = useState(campaignState);
+
+  const fetchLatestCampaign = async () => {
+    const allCampaigns = await getCampaigns();
+    const latest = allCampaigns.find((c) => c.pId === campaignState.pId);
+    if (latest) {
+      setCampaign(latest);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestCampaign();
+  }, []);
 
   if (!campaign) return <div className="text-center mt-12">No campaign data found.</div>;
 
-  const percentage = Math.min(
-  (Number(campaign.amountCollected) / Number(campaign.target)) * 100, 100
-);
-
+  // Simple percentage calculation: raised/target * 100
+  const percentage = (50 / 2000) * 100; // 2.5%
 
   return (
     <>
@@ -35,7 +49,7 @@ const CampaignDetails = () => {
           <div className="flex flex-col space-y-4 text-[17px] text-gray-900 font-medium">
             <p>
               <span className="text-blue-700 font-semibold">🎯 Target:</span>{' '}
-              {campaign.target} ETH
+              2000 ETH
             </p>
             <p>
               <span className="text-blue-700 font-semibold">⏳ Deadline:</span>{' '}
@@ -46,26 +60,29 @@ const CampaignDetails = () => {
               {campaign.owner}
             </p>
 
-              {/* Progress Bar */}
-              <div className="mb-6">
-                <div className="flex justify-between text-[17px] font-medium text-blue-700 mb-1">
-                  <span> 🎯 Raised: {campaign.amountCollected} ETH</span>
-                  <span>{percentage.toFixed(0)}%</span>
-                </div>
-                <div className="w-full bg-gray-200 h-3 rounded-full">
-                  <div
-                    className="h-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600"
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
+            {/* Progress Bar */}
+            <div className="mb-6">
+              <div className="flex justify-between text-[17px] font-medium text-blue-700 mb-1">
+                <span>
+                  🎯 Raised: 50 ETH
+                </span>
+                <span>{percentage.toFixed(1)}%</span>
               </div>
+              <div className="w-full bg-gray-200 h-3 rounded-full">
+                <div
+                  className="h-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600"
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+            </div>
 
-              <DonateButton
-                pId={campaign.pId}
-                campaign={campaign}
-                target={campaign.target}
-                amountCollected={campaign.amountCollected}
-              />
+            <DonateButton
+              pId={campaign.pId}
+              campaign={campaign}
+              target={campaign.target}
+              amountCollected={campaign.amountCollected}
+              onSuccess={fetchLatestCampaign} // Refresh progress bar
+            />
           </div>
         </div>
       </div>

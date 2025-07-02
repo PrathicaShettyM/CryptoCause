@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useStateContext } from '../context/index';
 
-const DonateButton = ({ pId, target, amountCollected }) => {
+const DonateButton = ({ pId, target, amountCollected, onSuccess }) => {
   const { donate } = useStateContext();
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,12 +21,17 @@ const DonateButton = ({ pId, target, amountCollected }) => {
 
       setLoading(true);
 
-      // 💸 Just call the smart contract donate logic
-      const tx = await donate(pId, amount);
-      console.log("✅ Donation TX Hash:", tx.hash);
+      // 💸 Call smart contract donation logic
+      const txHash = await donate(pId, amount);
+      console.log("✅ Donation TX Hash:", txHash);
 
       alert("🎉 Donation successful!");
       setAmount('');
+
+      if (onSuccess) {
+        onSuccess(); // 🔁 Refresh campaign data
+      }
+
     } catch (err) {
       console.error("❌ Donation failed:", err);
       alert("Something went wrong during donation.");
