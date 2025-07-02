@@ -44,7 +44,7 @@ const Navbar = () => {
     { name: 'dashboard', icon: FaHome, link: '/' },
     { name: 'create campaign', icon: FaPlus, link: '/create-campaign' },
     { name: 'view campaigns', icon: GrView, link: '/view-campaigns' },
-    { name: 'verify NFTs', icon: FaFileCircleCheck, link: '/view-nfts' },
+    { name: 'verify NFTs', icon: FaFileCircleCheck, link: '/verify-nfts' },
   ];
 
   useEffect(() => {

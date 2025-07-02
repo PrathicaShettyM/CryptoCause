@@ -16,7 +16,7 @@ function App() {
           <Route path="/view-campaigns" element={<Campaigns/>} />
           <Route path="/campaign/:id" element={<CampaignDetails />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/verify-nfts" element={<Verify />} />
         </Routes>
       </BrowserRouter>
     )
