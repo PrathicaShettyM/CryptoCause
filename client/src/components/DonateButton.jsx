@@ -1,15 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { toPng } from 'html-to-image';
-import { uploadToPinata, uploadMetadataToPinata } from '../utils/uploadToPinata';
-import CertificateTemplate from '../components/CertificateTemplate';
-import { useStateContext } from '../context';
+import React, { useState } from 'react';
+import { useStateContext } from '../context/index';
 
-const DonateButton = ({ pId, target, amountCollected, campaign }) => {
-  const { donate, address } = useStateContext();
-
+const DonateButton = ({ pId, target, amountCollected }) => {
+  const { donate } = useStateContext();
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const certRef = useRef(null);
 
   const handleDonate = async () => {
     try {
@@ -26,30 +21,14 @@ const DonateButton = ({ pId, target, amountCollected, campaign }) => {
 
       setLoading(true);
 
-      // Step 1: Generate certificate image (off-screen)
-      const dataUrl = await toPng(certRef.current);
-      const blob = await (await fetch(dataUrl)).blob();
-      const certFile = new File([blob], `donation-cert-${Date.now()}.png`, { type: 'image/png' });
+      // 💸 Just call the smart contract donate logic
+      const tx = await donate(pId, amount);
+      console.log("✅ Donation TX Hash:", tx.hash);
 
-      // Step 2: Upload image to IPFS
-      const imageUrl = await uploadToPinata(certFile);
-
-      // Step 3: Create and upload metadata
-      const metadata = {
-        name: `Donation Certificate`,
-        description: `Proof of donation to "${campaign.title}" by ${address}`,
-        image: imageUrl,
-      };
-      const tokenURI = await uploadMetadataToPinata(metadata);
-
-      // Step 4: Donate to smart contract with tokenURI
-      const tx = await donate(pId, amount, tokenURI);
-      console.log("✅ Donation TX:", tx.hash);
-
-      alert("🎉 Donation successful and certificate NFT minted!");
+      alert("🎉 Donation successful!");
       setAmount('');
-    } catch (error) {
-      console.error("❌ Donation or upload failed:", error);
+    } catch (err) {
+      console.error("❌ Donation failed:", err);
       alert("Something went wrong during donation.");
     } finally {
       setLoading(false);
@@ -71,20 +50,8 @@ const DonateButton = ({ pId, target, amountCollected, campaign }) => {
         disabled={loading}
         className="w-full py-3 bg-gradient-to-r from-blue-700 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:opacity-90 transition"
       >
-        {loading ? 'Processing...' : 'Donate & Mint Certificate'}
+        {loading ? 'Processing...' : 'Donate'}
       </button>
-
-      {/* Hidden cert for HTML-to-Image generation */}
-      <div style={{ position: 'absolute', left: '-9999px' }}>
-        <div ref={certRef}>
-          <CertificateTemplate
-            donor={address}
-            amount={amount}
-            campaignTitle={campaign.title}
-            txHash={"TX_hash_exists"} // Optional: replace with actual tx hash if needed
-          />
-        </div>
-      </div>
     </div>
   );
 };

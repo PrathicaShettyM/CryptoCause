@@ -63,15 +63,6 @@ export const StateContextProvider = ({ children }) => {
       const parsedTarget = ethers.parseUnits(form.target.toString(), 18);
       const parsedDeadline = Math.floor(new Date(form.deadline).getTime() / 1000);
 
-      console.log("🚀 Calling createCampaign with:", {
-        address,
-        title: form.title,
-        description: form.description,
-        target: parsedTarget,
-        deadline: parsedDeadline,
-        image: form.image,
-      });
-
       const tx = await contract.createCampaign(
         address,
         form.title,
@@ -81,24 +72,9 @@ export const StateContextProvider = ({ children }) => {
         form.image
       );
 
-      console.log("⏳ Transaction sent:", tx.hash);
       await tx.wait();
-      console.log("✅ Campaign created in TX:", tx.hash);
     } catch (error) {
-      console.error("❌ Failed to create campaign:", {
-        message: error.message,
-        reason: error.reason,
-        code: error.code,
-        data: error.data,
-        stack: error.stack
-      });
-
-      if (error.code === "INSUFFICIENT_FUNDS") {
-        alert("💸 You don't have enough ETH for gas or donation target!");
-      } else {
-        alert("❌ Transaction failed: " + (error.reason || error.message));
-      }
-
+      console.error("❌ Failed to create campaign:", error);
       throw error;
     }
   };
@@ -107,15 +83,8 @@ export const StateContextProvider = ({ children }) => {
     try {
       if (!contract) throw new Error("Contract not connected");
 
-      console.log("📞 Calling getCampaigns...");
-      
-      // Direct contract call - much simpler and more reliable
       const campaigns = await contract.getCampaigns();
-      
-      console.log("📋 Raw campaigns data:", campaigns);
-
-      // Transform the data
-      const parsedCampaigns = campaigns.map((campaign, i) => ({
+      return campaigns.map((campaign, i) => ({
         owner: campaign.owner,
         title: campaign.title,
         description: campaign.description,
@@ -125,9 +94,6 @@ export const StateContextProvider = ({ children }) => {
         image: campaign.image,
         pId: i,
       }));
-
-      console.log("✅ Parsed campaigns:", parsedCampaigns);
-      return parsedCampaigns;
     } catch (error) {
       console.error("❌ Error fetching campaigns:", error);
       return [];
@@ -139,13 +105,18 @@ export const StateContextProvider = ({ children }) => {
     return allCampaigns.filter((campaign) => campaign.owner.toLowerCase() === address.toLowerCase());
   };
 
-  const donate = async (pId, amount, tokenURI) => {
+  const donate = async (pId, amount) => {
     try {
-      const tx = await contract.donateToCampaign(pId, tokenURI, {
+      const tx = await contract.donateToCampaign(pId, "", {
         value: ethers.parseEther(amount),
       });
       await tx.wait();
-      return tx;
+
+      if (address) {
+        sessionStorage.setItem(`${address}-tx-${pId}`, tx.hash);
+      }
+
+      return tx.hash;
     } catch (error) {
       console.error("❌ Donation failed:", error);
       throw error;
