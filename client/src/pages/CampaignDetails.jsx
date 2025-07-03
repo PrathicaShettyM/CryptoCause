@@ -3,11 +3,11 @@ import { useStateContext } from '../context';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import DonateButton from '../components/DonateButton';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 
 const CampaignDetails = () => {
   const { state: campaignState } = useLocation();
-  const { getCampaigns, contract } = useStateContext(); // ✅ include contract
+  const { getCampaigns, contract } = useStateContext();
   const [campaign, setCampaign] = useState(campaignState);
 
   const fetchLatestCampaign = async () => {
@@ -28,13 +28,6 @@ const CampaignDetails = () => {
   }, [contract]);
 
   if (!campaign) return <div className="text-center mt-12">No campaign data found.</div>;
-
-  // ✅ Calculate percentage from live data
-  const percentage = useMemo(() => {
-    const raised = parseFloat(campaign.amountCollected || '0');
-    const target = parseFloat(campaign.target || '1'); // prevent divide-by-zero
-    return target > 0 ? (raised / target) * 100 : 0;
-  }, [campaign.amountCollected, campaign.target]);
 
   return (
     <>
@@ -58,7 +51,11 @@ const CampaignDetails = () => {
           <div className="flex flex-col space-y-4 text-[17px] text-gray-900 font-medium">
             <p>
               <span className="text-blue-700 font-semibold">🎯 Target:</span>{' '}
-              {campaign.target} ETH
+              {(Number(campaign.target) / 1e18).toFixed(4)} ETH
+            </p>
+            <p>
+              <span className="text-blue-700 font-semibold">💰 Raised:</span>{' '}
+              {campaign.amountCollected} ETH
             </p>
             <p>
               <span className="text-blue-700 font-semibold">⏳ Deadline:</span>{' '}
@@ -69,26 +66,12 @@ const CampaignDetails = () => {
               {campaign.owner}
             </p>
 
-            {/* ✅ Progress Bar */}
-            <div className="mb-6">
-              <div className="flex justify-between text-[17px] font-medium text-blue-700 mb-1">
-                <span>🎯 Raised: {campaign.amountCollected} ETH</span>
-              </div>
-
-              <div className="w-full bg-gray-200 h-3 rounded-full">
-                <div
-                  className="h-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600"
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-            </div>
-
             <DonateButton
               pId={campaign.pId}
               campaign={campaign}
               target={campaign.target}
               amountCollected={campaign.amountCollected}
-              onSuccess={fetchLatestCampaign} // 🔁 updates bar on donate
+              onSuccess={fetchLatestCampaign}
             />
           </div>
         </div>

@@ -20,8 +20,14 @@ const FundCard = ({ campaign, index }) => {
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{campaign.description}</p>
 
         <div className="mt-auto space-y-1 text-sm text-gray-800">
-          <p><strong>🎯 Target:</strong> {campaign.target} ETH</p>
-          <p><strong>⏳ Deadline:</strong> {new Date(campaign.deadline * 1000).toLocaleDateString()}</p>
+          <p>
+            <strong>🎯 Target:</strong>{' '}
+            {(Number(campaign.target) / 1e18).toFixed(4)} ETH
+          </p>
+          <p>
+            <strong>⏳ Deadline:</strong>{' '}
+            {new Date(campaign.deadline * 1000).toLocaleDateString()}
+          </p>
         </div>
 
         <button

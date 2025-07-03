@@ -145,3 +145,6 @@ Highlights matching donation edges when correct data is entered — simulates ha
 Tooltips on hover display hashes for verification.
 
 Auto-refreshes graph every 15 seconds to reflect live blockchain updates.
+
+
+python -m http.server 8000

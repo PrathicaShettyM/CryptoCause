@@ -120,7 +120,7 @@ export const StateContextProvider = ({ children }) => {
         sessionStorage.setItem(`${address}-tx-${pId}`, tx.hash);
       }
 
-      return tx.hash;
+      return tx;
     } catch (error) {
       console.error("❌ Donation failed:", error);
       throw error;
