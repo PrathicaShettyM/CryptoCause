@@ -124,3 +124,24 @@ Toasts instead of alerts
 Mint certificate UI
 IPFS upload for real metadata
 Filtering by owner or date
+
+Current Functionality (What it Does)
+Connects to MetaMask to access blockchain.
+
+Fetches campaign data from your deployed smart contract (getCampaigns()).
+
+Generates a real-time force-directed graph:
+
+Campaign nodes (blue)
+
+Donor nodes (green)
+
+Edges/links between donor and campaign based on on-chain data
+
+Generates SHA-256 hashes from (address + donationAmountInWei) to allow donation verification.
+
+Highlights matching donation edges when correct data is entered — simulates hash matching.
+
+Tooltips on hover display hashes for verification.
+
+Auto-refreshes graph every 15 seconds to reflect live blockchain updates.

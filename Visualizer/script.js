@@ -377,82 +377,6 @@ const ABI = [
   }
 ]
 
-async function connect() {
-  if (!window.ethereum) return alert("Install MetaMask");
-
-  provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  signer = provider.getSigner();
-  contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-
-  console.log("Connected to:", await signer.getAddress());
-
-  fetchAndRenderGraph();
-}
-
-async function fetchAndRenderGraph() {
-  try {
-    const campaigns = await contract.getCampaigns();
-    drawForceGraph(campaigns);
-  } catch (err) {
-    console.error("Error fetching campaigns:", err);
-  }
-}
-
-async function verifyDonation() {
-  const addr = document.getElementById("verifyAddress").value.trim().toLowerCase();
-  const amountStr = document.getElementById("verifyAmount").value.trim();
-  const resultEl = document.getElementById("verifyResult");
-  const hashEl = document.getElementById("hashDisplay");
-
-  if (!addr || !amountStr) {
-    resultEl.textContent = "❌ Please enter both address and amount.";
-    resultEl.classList.add("error");
-    return;
-  }
-
-  try {
-    const amount = ethers.utils.parseEther(amountStr).toString(); // normalize to wei
-    const hashInput = addr + amount;
-
-    // Animation: show input conversion
-    resultEl.innerHTML = `
-      🔢 Converting ETH to Wei...<br/>
-      ➡️ ${amountStr} ETH = ${amount} wei<br/>
-      🧮 Hashing: <code>${hashInput}</code>...<br/>
-    `;
-
-    await new Promise(r => setTimeout(r, 1000)); // simulate delay
-
-    const hash = ethers.utils.sha256(ethers.utils.toUtf8Bytes(hashInput));
-    hashEl.textContent = hash;
-
-    resultEl.innerHTML += `🔏 Hash: <code>${hash}</code><br/>`;
-
-    const foundNode = document.querySelector(`[data-hash="${hash}"]`);
-    const matchingLink = document.querySelector(`[data-link-hash="${hash}"]`);
-
-    if (foundNode && matchingLink) {
-      resultEl.innerHTML += "✅ <b style='color:lightgreen'>Verified!</b><br/>";
-      resultEl.classList.remove("error");
-
-      // Animate the matching link
-      matchingLink.classList.add("flash-link");
-      setTimeout(() => {
-        matchingLink.classList.remove("flash-link");
-      }, 3000);
-    } else {
-      resultEl.innerHTML += "❌ <b style='color:salmon'>Hash not found</b>. Double-check address & amount.";
-      resultEl.classList.add("error");
-    }
-
-  } catch (err) {
-    console.error(err);
-    resultEl.textContent = "❌ Error computing hash. Check your input.";
-    resultEl.classList.add("error");
-  }
-}
-
 
 function drawForceGraph(campaigns) {
   const container = document.getElementById("graph-container");
@@ -587,6 +511,84 @@ function drawForceGraph(campaigns) {
     d.fx = null;
     d.fy = null;
   }
+}
+
+async function verifyDonation() {
+  const addr = document.getElementById("verifyAddress").value.trim().toLowerCase();
+  const amountStr = document.getElementById("verifyAmount").value.trim();
+  const resultEl = document.getElementById("verifyResult");
+  const hashEl = document.getElementById("hashDisplay");
+
+  if (!addr || !amountStr) {
+    resultEl.textContent = "❌ Please enter both address and amount.";
+    resultEl.classList.add("error");
+    return;
+  }
+
+  try {
+    const amount = ethers.utils.parseEther(amountStr).toString(); // normalize to wei
+    const hashInput = addr + amount;
+
+    // Animation: show input conversion
+    resultEl.innerHTML = `
+      🔢 Converting ETH to Wei...<br/>
+      ➡️ ${amountStr} ETH = ${amount} wei<br/>
+      🧮 Hashing: <code>${hashInput}</code>...<br/>
+    `;
+
+    await new Promise(r => setTimeout(r, 1000)); // simulate delay
+
+    const hash = ethers.utils.sha256(ethers.utils.toUtf8Bytes(hashInput));
+    hashEl.textContent = hash;
+
+    resultEl.innerHTML += `🔏 Hash: <code>${hash}</code><br/>`;
+
+    const foundNode = document.querySelector(`[data-hash="${hash}"]`);
+    const matchingLink = document.querySelector(`[data-link-hash="${hash}"]`);
+
+    if (foundNode && matchingLink) {
+      resultEl.innerHTML += "✅ <b style='color:lightgreen'>Verified!</b><br/>";
+      resultEl.classList.remove("error");
+
+      // Animate the matching link
+      matchingLink.classList.add("flash-link");
+      setTimeout(() => {
+        matchingLink.classList.remove("flash-link");
+      }, 3000);
+    } else {
+      resultEl.innerHTML += "❌ <b style='color:salmon'>Hash not found</b>. Double-check address & amount.";
+      resultEl.classList.add("error");
+    }
+
+  } catch (err) {
+    console.error(err);
+    resultEl.textContent = "❌ Error computing hash. Check your input.";
+    resultEl.classList.add("error");
+  }
+}
+
+
+async function fetchAndRenderGraph() {
+  try {
+    const campaigns = await contract.getCampaigns();
+    drawForceGraph(campaigns);
+  } catch (err) {
+    console.error("Error fetching campaigns:", err);
+  }
+}
+
+
+async function connect() {
+  if (!window.ethereum) return alert("Install MetaMask");
+
+  provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = provider.getSigner();
+  contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+  console.log("Connected to:", await signer.getAddress());
+
+  fetchAndRenderGraph();
 }
 
 

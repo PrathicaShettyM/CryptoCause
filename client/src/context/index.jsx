@@ -83,6 +83,10 @@ export const StateContextProvider = ({ children }) => {
     try {
       if (!contract) throw new Error("Contract not connected");
 
+      console.log("Contract Address:", contractAddress);
+      console.log("Chain ID:", await window.ethereum.request({ method: 'eth_chainId' }));
+
+
       const campaigns = await contract.getCampaigns();
       return campaigns.map((campaign, i) => ({
         owner: campaign.owner,

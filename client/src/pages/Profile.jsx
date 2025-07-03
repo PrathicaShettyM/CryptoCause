@@ -82,9 +82,6 @@ const Profile = () => {
         <div style="font-size: 34px; font-weight: 600; margin-top: 10px;">Certificate of Donation</div>
         <div style="font-size: 14px; opacity: 0.85;">Digitally Signed Blockchain-Verified Contribution</div>
 
-        <div style="position: absolute; top: 30px; right: 40px; font-size: 14px; font-weight: 600; color: #ffffff;">
-          Token ID: #${campaign.pId}
-        </div>
       </div>
 
       <div style="padding: 30px 40px;">
