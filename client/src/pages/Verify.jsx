@@ -48,7 +48,7 @@ const Verify = () => {
               pId: camp.pId,
             });
             setCertificateFound(true);
-            toast.success("✅ Valid donation certificate found.");
+            toast.success("Valid donation certificate found.");
             found = true;
             break;
           }
@@ -56,7 +56,7 @@ const Verify = () => {
       }
 
       if (!found) {
-        throw new Error("❌ No valid certificate matched the given details.");
+        throw new Error("No valid certificate matched the given details.");
       }
 
     } catch (err) {

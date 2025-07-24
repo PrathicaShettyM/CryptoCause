@@ -93,7 +93,7 @@ const CreateCampaign = () => {
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
-                labelName="Individual Donor name or Donor Organisation name*"
+                labelName="Recipient Organisation*"
                 placeholder="Microsoft..."
                 inputType="text"
                 value={form.name}

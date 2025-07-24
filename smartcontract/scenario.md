@@ -140,3 +140,6 @@ Check txHash	The ETH was actually sent
 All this is on-chain	Nobody can fake it
 
 You now have a digitally verifiable donation certificate powered by blockchain — the exact reason governments and auditors trust blockchain-based proofs.
+
+
+python -m http.server 8000
