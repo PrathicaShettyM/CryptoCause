@@ -14,7 +14,12 @@ CryptoCause is a decentralized crowdfunding platform built on the Ethereum block
 The entire system ensures transparency, immutability, and trustless verification — all without relying on any central authority.
 
 ### **Youtube video link**
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EQ4p1rWDqfs?si=tolAPmW7k__DbZD_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=EQ4p1rWDqfs">
+    <img src="https://img.youtube.com/vi/EQ4p1rWDqfs/hqdefault.jpg" alt="Watch the Demo on YouTube" />
+  </a>
+</p>
 
 
 ---
