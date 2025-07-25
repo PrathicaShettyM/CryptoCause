@@ -14,6 +14,7 @@ import {
 } from "react-icons/fa";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Features from "./Features"; // ✅ Imported here
 
 const GlowingCard = ({ children, className = "", delay = 0 }) => (
   <motion.div
@@ -192,67 +193,8 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        {/* Features Section */}
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            variants={itemVariants}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
-              Revolutionary Features
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Built on cutting-edge blockchain technology to ensure maximum transparency, security, and impact verification.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <GlowingCard delay={0.2}>
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg">
-                <FaEthereum />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Decentralized Social Contribution Channels
-              </h3>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Launch or support transparent philanthropic initiatives with fully on-chain processing and traceable impact flows.
-              </p>
-              <div className="mt-6 flex items-center text-blue-600 font-semibold">
-                Learn More <FaArrowRight className="ml-2" />
-              </div>
-            </GlowingCard>
-
-            <GlowingCard delay={0.4}>
-              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg">
-                <FaCertificate />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Cryptographic Proof of Contribution
-              </h3>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Each act of giving is linked to a verifiable digital certificate using NFT infrastructure with embedded on-chain proof.
-              </p>
-              <div className="mt-6 flex items-center text-purple-600 font-semibold">
-                View Certificates <FaArrowRight className="ml-2" />
-              </div>
-            </GlowingCard>
-
-            <GlowingCard delay={0.6}>
-              <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 shadow-lg">
-                <FaShieldAlt />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Verification and Legal Documentation
-              </h3>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Integrated tools for validating digital contribution records and exporting formal documentation for institutional use.
-              </p>
-              <div className="mt-6 flex items-center text-pink-600 font-semibold">
-                Access Tools <FaArrowRight className="ml-2" />
-              </div>
-            </GlowingCard>
-          </div>
-        </div>
+        {/* ✅ Features Component Here */}
+        <Features />
 
         {/* CTA Section */}
         <motion.div
